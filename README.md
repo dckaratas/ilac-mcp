@@ -93,7 +93,11 @@ makinesinde doğrudan titck.gov.tr'den indirilir. Yanıtlar kaynak ve liste tari
 
 ```bash
 uv run pytest
-git config core.hooksPath .githooks   # her commit öncesi testleri çalıştırır (bir kez)
+git config core.hooksPath .githooks   # commit öncesi kontrolleri etkinleştirir (bir kez)
 ```
+
+Commit öncesi kanca; anahtar/secret dosyalarını ve TİTCK verisini engeller, [gitleaks](https://github.com/gitleaks/gitleaks)
+ile secret taraması yapar ve testleri çalıştırır. gitleaks'in `PATH`'te olması gerekir. CI aynı taramayı
+tüm git geçmişi üzerinde tekrarlar.
 
 Testler gerçek TİTCK dosyalarının başlık ve sayfa yapısını taklit eden küçük örnek dosyalar kullanır.

@@ -1,6 +1,30 @@
 #!/bin/sh
-# Testler geçmezse commit'i durdurur. Etkinleştirme: git config core.hooksPath .githooks
+# Commit öncesi kontroller: yasaklı dosyalar, secret taraması (gitleaks), testler.
+# Etkinleştirme: git config core.hooksPath .githooks
 PATH="$HOME/.local/bin:$PATH"
+
+# 1) Repoya girmemesi gereken dosyalar (.gitignore'u `git add -f` ile aşanlar dahil)
+blocked=$(git diff --cached --name-only --diff-filter=ACR | grep -Ei \
+    '(^|/)\.env($|\.)|\.(pem|key|p12|pfx|keystore|jks)$|(^|/)id_(rsa|dsa|ecdsa|ed25519)|\.(xlsx|xls|db|sqlite3?|pdf)$' \
+    | grep -Ev '(^|/)\.env\.example$')
+if [ -n "$blocked" ]; then
+    echo "pre-commit: bu dosyalar repoya konmamalı (anahtar/secret veya TİTCK verisi):" >&2
+    echo "$blocked" | sed 's/^/  - /' >&2
+    exit 1
+fi
+
+# 2) Secret taraması
+if ! command -v gitleaks >/dev/null 2>&1; then
+    echo "pre-commit: gitleaks bulunamadı; kurulum: https://github.com/gitleaks/gitleaks/releases" >&2
+    exit 1
+fi
+gitleaks git --pre-commit --staged --redact --no-banner --log-level warn --verbose || {
+    echo "pre-commit: olası secret bulundu, commit iptal edildi." >&2
+    echo "  Yanlış pozitifse satırın sonuna '# gitleaks:allow' ekleyin." >&2
+    exit 1
+}
+
+# 3) Testler
 if ! command -v uv >/dev/null 2>&1; then
     echo "pre-commit: uv bulunamadı, testler çalıştırılamadı." >&2
     exit 1

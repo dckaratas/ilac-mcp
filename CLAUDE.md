@@ -6,7 +6,9 @@ TİTCK ilaç listelerini MCP üzerinden sunan Python paketi (mcp SDK 2.x `MCPSer
 
 - Test: `uv run pytest -q`
 - Canlı veriyle deneme: `uv run ilac-mcp sync` ve `uv run ilac-mcp ara "<sorgu>"`
-- Pre-commit kancası: `git config core.hooksPath .githooks` (testler geçmezse commit durur; `--no-verify` kullanma)
+- Pre-commit kancası: `git config core.hooksPath .githooks`. Sırasıyla yasaklı dosyaları (`.env`, anahtar
+  dosyaları, `*.xlsx`/`*.db`/`*.pdf`), gitleaks ile secret'ları ve testleri kontrol eder; biri başarısızsa
+  commit durur. `--no-verify` kullanma. Gerekli araçlar: `uv`, `gitleaks` (`~/.local/bin` altında).
 
 ## Çalışma kuralları
 
