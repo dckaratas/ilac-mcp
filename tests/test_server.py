@@ -37,3 +37,40 @@ def test_tools_over_mcp(conn, tmp_path, monkeypatch):
 
     _, result = _call("ilac_detay", {"barkod": "123"})
     assert "bulunamadı" in result.structured_content["hata"]
+
+
+def test_tools_close_connections(conn, tmp_path, monkeypatch):
+    import sqlite3
+
+    data = tmp_path / "data"
+    data.mkdir()
+    shutil.copy(tmp_path / "ilac.db", data / "ilac.db")
+    monkeypatch.setenv("ILAC_MCP_DATA_DIR", str(data))
+    class Tracked(sqlite3.Connection):
+        closed = False
+
+        def close(self):
+            self.closed = True
+            super().close()
+
+    opened: list[Tracked] = []
+
+    def tracked_connect(path=None):
+        c = sqlite3.connect(path or db.db_path(), factory=Tracked)
+        c.row_factory = sqlite3.Row
+        opened.append(c)
+        return c
+
+    monkeypatch.setattr(db, "connect", tracked_connect)
+
+    for name, args in [("ilac_ara", {"sorgu": "onadron"}), ("ilac_detay", {"barkod": "8699508010134"}),
+                       ("esdeger_bul", {"barkod": "8699508010134"}), ("haftalik_degisiklikler", {}),
+                       ("veri_durumu", {})]:
+        _call(name, args)
+
+    assert len(opened) == 5
+    assert all(c.closed for c in opened)
+    # Windows'ta açık kalan bağlantı veritabanının değiştirilmesini (sync) engeller
+    replacement = data / "yeni.db"
+    shutil.copy(data / "ilac.db", replacement)
+    replacement.replace(data / "ilac.db")

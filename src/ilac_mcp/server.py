@@ -29,7 +29,7 @@ READ_ONLY = ToolAnnotations(readOnlyHint=True, openWorldHint=False)
 def _conn():
     if not db.db_path().exists():
         sync()
-    return db.connect()
+    return db.session()
 
 
 def _kaynak(conn) -> dict[str, Any]:
@@ -88,7 +88,7 @@ def haftalik_degisiklikler() -> dict[str, Any]:
 def veri_guncelle() -> dict[str, Any]:
     """TİTCK'dan en güncel listeleri indirip yerel veritabanını yeniden kurar (yaklaşık 4 MB indirme)."""
     stats = sync()
-    with db.connect() as conn:
+    with db.session() as conn:
         return {"istatistik": stats, **_kaynak(conn)}
 
 
@@ -97,5 +97,5 @@ def veri_durumu() -> dict[str, Any]:
     """Yerel verinin hangi tarihli TİTCK listelerinden kurulduğunu gösterir."""
     if not db.db_path().exists():
         return {"durum": "Veri henüz indirilmedi. veri_guncelle aracını çalıştırın.", "konum": str(db.db_path())}
-    with db.connect() as conn:
+    with db.session() as conn:
         return {"meta": db.meta(conn), "konum": str(db.db_path())}

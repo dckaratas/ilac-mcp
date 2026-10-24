@@ -26,7 +26,7 @@ def main(argv: list[str] | None = None) -> None:
     elif args.komut == "ara":
         from . import db
 
-        with db.connect() as conn:
+        with db.session() as conn:
             for r in db.search(conn, args.sorgu, limit=args.limit):
                 print(f"{r['barkod']}  {r.get('durum') or '-':6}  {r.get('atc') or '-':8}  {r['ad']}")
     else:
