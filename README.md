@@ -1,5 +1,7 @@
 # ilac-mcp
 
+[![test](https://github.com/dckaratas/ilac-mcp/actions/workflows/test.yml/badge.svg)](https://github.com/dckaratas/ilac-mcp/actions/workflows/test.yml)
+
 Türkiye'de ruhsatlı beşeri ilaçlar için [TİTCK](https://www.titck.gov.tr) verisini yapay zekâ asistanlarına
 açan bir [Model Context Protocol](https://modelcontextprotocol.io) sunucusu.
 
