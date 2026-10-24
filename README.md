@@ -91,6 +91,7 @@ makinesinde doğrudan titck.gov.tr'den indirilir. Yanıtlar kaynak ve liste tari
 
 ```bash
 uv run pytest
+git config core.hooksPath .githooks   # her commit öncesi testleri çalıştırır (bir kez)
 ```
 
 Testler gerçek TİTCK dosyalarının başlık ve sayfa yapısını taklit eden küçük örnek dosyalar kullanır.

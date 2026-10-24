@@ -1,0 +1,12 @@
+#!/bin/sh
+# Testler geçmezse commit'i durdurur. Etkinleştirme: git config core.hooksPath .githooks
+PATH="$HOME/.local/bin:$PATH"
+if ! command -v uv >/dev/null 2>&1; then
+    echo "pre-commit: uv bulunamadı, testler çalıştırılamadı." >&2
+    exit 1
+fi
+echo "pre-commit: testler çalışıyor..." >&2
+uv run --frozen pytest -q || {
+    echo "pre-commit: testler başarısız, commit iptal edildi." >&2
+    exit 1
+}
