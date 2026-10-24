@@ -16,6 +16,7 @@ TİTCK ilaç listelerini MCP üzerinden sunan Python paketi (mcp SDK 2.x `MCPSer
 - Dal adı: `<tür>/<kisa-ad>`; PR başlığı: `<tür>: <kısa açıklama>` (Türkçe, küçük harfle başlar, nokta yok).
   Türler: `feat`, `fix`, `docs`, `test`, `ci`, `refactor`, `chore`.
 - PR açıklaması kısa: bir satır özet, ardından değişiklikler madde madde.
-- `main` korumalı: 4 CI işi (ubuntu/windows × py3.11/py3.13) geçmeli, çözülmemiş yorum kalmamalı.
+- `main` korumalı: 4 test işi (ubuntu/windows × py3.11/py3.13) ve `gitleaks` secret taraması geçmeli,
+  çözülmemiş yorum kalmamalı.
   PR'lar yalnızca squash ile birleşir; squash commit başlığı PR başlığıdır, dal birleşince silinir.
 - TİTCK verisi (`*.xlsx`, `*.db`, PDF) repoya konmaz; testler sentetik örnek dosyalar kullanır.
