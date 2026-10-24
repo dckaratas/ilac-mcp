@@ -5,7 +5,8 @@ from __future__ import annotations
 import os
 import re
 import sqlite3
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -69,6 +70,21 @@ def connect(path: Path | None = None) -> sqlite3.Connection:
     conn = sqlite3.connect(path or db_path())
     conn.row_factory = sqlite3.Row
     return conn
+
+
+@contextmanager
+def session(path: Path | None = None) -> Iterator[sqlite3.Connection]:
+    """Bağlantıyı açıp iş bitince kapatır.
+
+    sqlite3.Connection'ın kendi `with` bloğu yalnızca transaction'ı yönetir,
+    bağlantıyı kapatmaz; Windows'ta açık kalan bağlantı veritabanı dosyasının
+    sync sırasında değiştirilmesini engeller.
+    """
+    conn = connect(path)
+    try:
+        yield conn
+    finally:
+        conn.close()
 
 
 def merge(ruhsatli: Iterable[Record], erecete: dict[str, list[Record]]) -> dict[str, Record]:
