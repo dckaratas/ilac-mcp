@@ -7,7 +7,7 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
-import httpx
+import httpx2 as httpx
 
 from .normalize import to_iso_date
 
